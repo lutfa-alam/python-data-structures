@@ -1,0 +1,114 @@
+import mysql.connector
+
+# Connect to MySQL Database
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",  # Change this to your MySQL username
+    password="yourpassword",  # Change this to your MySQL password
+    database="ClubDB"
+)
+cursor = conn.cursor()
+
+# Create tables if they don't exist
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Members (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Events (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) UNIQUE NOT NULL,
+    event_date DATE NOT NULL
+)
+""")
+
+conn.commit()
+
+# Function to add a member
+def add_member():
+    name = input("Enter member name: ")
+    try:
+        cursor.execute("INSERT INTO Members (name) VALUES (%s)", (name,))
+        conn.commit()
+        print(f"Member '{name}' added successfully!")
+    except mysql.connector.IntegrityError:
+        print("Member already exists!")
+
+# Function to remove a member
+def remove_member():
+    name = input("Enter member name to remove: ")
+    cursor.execute("DELETE FROM Members WHERE name = %s", (name,))
+    if cursor.rowcount > 0:
+        conn.commit()
+        print(f"Member '{name}' removed successfully!")
+    else:
+        print("Member not found!")
+
+# Function to schedule an event
+def schedule_event():
+    title = input("Enter event title: ")
+    date = input("Enter event date (YYYY-MM-DD): ")
+    try:
+        cursor.execute("INSERT INTO Events (title, event_date) VALUES (%s, %s)", (title, date))
+        conn.commit()
+        print(f"Event '{title}' scheduled on {date}.")
+    except mysql.connector.IntegrityError:
+        print("Event already exists!")
+
+# Function to view all members
+def view_members():
+    cursor.execute("SELECT name FROM Members")
+    members = cursor.fetchall()
+    print("\nClub Members:")
+    for member in members:
+        print(f"- {member[0]}")
+    if not members:
+        print("No members yet.")
+
+# Function to view all events
+def view_events():
+    cursor.execute("SELECT title, event_date FROM Events")
+    events = cursor.fetchall()
+    print("\nScheduled Events:")
+    for event in events:
+        print(f"- {event[0]} on {event[1]}")
+    if not events:
+        print("No events scheduled.")
+
+# Main menu
+def main():
+    while True:
+        print("\n📌 Club Management Menu:")
+        print("1. Add Member")
+        print("2. Remove Member")
+        print("3. Schedule Event")
+        print("4. View Members")
+        print("5. View Events")
+        print("6. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            add_member()
+        elif choice == "2":
+            remove_member()
+        elif choice == "3":
+            schedule_event()
+        elif choice == "4":
+            view_members()
+        elif choice == "5":
+            view_events()
+        elif choice == "6":
+            print("Exiting... Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if _name_ == "_main_":
+    main()
+
+# Close the database connection when the program exits
+conn.close()

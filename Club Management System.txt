@@ -1,0 +1,70 @@
+# Simple Club Management System
+club_members = []
+club_events = {}
+
+def add_member():
+    name = input("Enter member name: ")
+    if name in club_members:
+        print("Member already exists!")
+    else:
+        club_members.append(name)
+        print(f"{name} added to the club!")
+
+def remove_member():
+    name = input("Enter member name to remove: ")
+    if name in club_members:
+        club_members.remove(name)
+        print(f"{name} removed from the club.")
+    else:
+        print("Member not found!")
+
+def schedule_event():
+    event_name = input("Enter event name: ")
+    event_date = input("Enter event date (YYYY-MM-DD): ")
+    club_events[event_name] = event_date
+    print(f"Event '{event_name}' scheduled on {event_date}.")
+
+def view_members():
+    print("\nClub Members:")
+    for member in club_members:
+        print(f"- {member}")
+    if not club_members:
+        print("No members yet.")
+
+def view_events():
+    print("\nScheduled Events:")
+    for event, date in club_events.items():
+        print(f"- {event} on {date}")
+    if not club_events:
+        print("No events scheduled.")
+
+def main():
+    while True:
+        print("\n📌 Club Management Menu:")
+        print("1. Add Member")
+        print("2. Remove Member")
+        print("3. Schedule Event")
+        print("4. View Members")
+        print("5. View Events")
+        print("6. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            add_member()
+        elif choice == "2":
+            remove_member()
+        elif choice == "3":
+            schedule_event()
+        elif choice == "4":
+            view_members()
+        elif choice == "5":
+            view_events()
+        elif choice == "6":
+            print("Exiting... Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if _name_ == "_main_":
+    main()
